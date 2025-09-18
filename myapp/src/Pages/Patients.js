@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import PatientCard from "../Components/PatientCard";
+import "../App.css"
 
 function Patients() {
   const [patients, setPatients] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [newPatient, setNewPatient] = useState({ name: "", email: "", age: "" });
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
@@ -24,6 +28,26 @@ function Patients() {
       });
   }, []);
 
+  const handleAddPatient = (e) => {
+    e.preventDefault();
+
+    if (!newPatient.name || !newPatient.email || !newPatient.age) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    const newEntry = {
+      id: patients.length + 1,
+      name: newPatient.name,
+      email: newPatient.email,
+      age: newPatient.age,
+    };
+
+    setPatients([newEntry, ...patients]);
+    setNewPatient({ name: "", email: "", age: "" });
+    setShowForm(false); // hide form after adding
+  };
+
   const filteredPatients = patients.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -35,6 +59,49 @@ function Patients() {
     <div className="container">
       <h2 className="page-title">Our Patients</h2>
 
+      {/* Toggle Add Patient */}
+      <div className="add-section">
+        {!showForm ? (
+          <button className="add-toggle" onClick={() => setShowForm(true)}>
+            ➕ Add Patient
+          </button>
+        ) : (
+          <form className="add-form" onSubmit={handleAddPatient}>
+            <input
+              type="text"
+              placeholder="👤 Name"
+              value={newPatient.name}
+              onChange={(e) =>
+                setNewPatient({ ...newPatient, name: e.target.value })
+              }
+            />
+            <input
+              type="email"
+              placeholder="📧 Email"
+              value={newPatient.email}
+              onChange={(e) =>
+                setNewPatient({ ...newPatient, email: e.target.value })
+              }
+            />
+            <input
+              type="number"
+              placeholder="🎂 Age"
+              value={newPatient.age}
+              onChange={(e) =>
+                setNewPatient({ ...newPatient, age: e.target.value })
+              }
+            />
+            <div className="form-actions">
+              <button type="submit">✅ Save</button>
+              <button type="button" onClick={() => setShowForm(false)}>
+                ❌ Cancel
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+
+      {/* Search */}
       <div className="controls">
         <input
           type="text"
@@ -44,6 +111,7 @@ function Patients() {
         />
       </div>
 
+      {/* Patients List */}
       <div className="patient-grid">
         {filteredPatients.length > 0 ? (
           filteredPatients.map((patient) => (
