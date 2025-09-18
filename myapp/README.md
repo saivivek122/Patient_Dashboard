@@ -38,8 +38,9 @@ The dashboard allows you to view, search, and manage patient records.
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/<your-username>/jarurat-care.git
+git clone https://github.com/saivivek122/Patient_Dashboard/tree/main/myapp
 cd jarurat-care
+
 
 2. Install dependencies
 npm install
